@@ -1,10 +1,14 @@
 !function() {
   'use strict';
-
   
+  const MODE_LIGHT = Symbol();
+  const MODE_DARK = Symbol();
+
+  var mode = MODE_LIGHT;
+
 
   function applyMode(newMode) {
-    if (newMode === 'dark') {
+    if (newMode === MODE_DARK) {
       document.body.classList.add('dark');
       document.body.classList.remove('light');
     }
@@ -13,18 +17,15 @@
       document.body.classList.remove('dark');
     }
   }
+  
+  function applyLux(lux) {
+    if (lux <= 50 && mode === MODE_LIGHT) 
+      applyMode((mode = MODE_DARK));
+    if (lux > 100 && mode === MODE_DARK) 
+      applyMode((mode = MODE_LIGHT));
+  }
 
-
-  var mode = 'light';
   window.addEventListener('devicelight', function(e) {
-    if (e.value <= 50 && mode === 'light') {
-      applyMode('dark');
-      mode = 'dark';
-    }
-    if (e.value > 50 && mode === 'dark') {
-      applyMode('light');
-      mode = 'light';
-    }
+    applyLux(e.value);
   });
-
 }();
